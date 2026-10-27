@@ -525,5 +525,29 @@ $("#copy-phone").addEventListener("click",async()=>{
 applyLang();
 </script>
 
+<div id="rx" hidden role="status"><span class="rx-i">Rx</span><p id="rx-t"></p><button type="button" id="rx-x" aria-label="Close">×</button></div>
+<style>
+#rx{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:70;display:flex;align-items:center;gap:12px;width:min(560px,calc(100% - 32px));
+ background:var(--fg);color:var(--bg);padding:12px 14px 12px 16px;border-radius:14px;box-shadow:var(--shadow);animation:rxin .5s cubic-bezier(.2,.8,.2,1)}
+#rx[hidden]{display:none}
+#rx .rx-i{font-family:var(--display,serif);font-style:italic;font-size:28px;line-height:1;color:var(--gold-soft)}
+#rx p{flex:1;font-size:14px;line-height:1.4;margin:0}
+#rx b{color:var(--gold-soft)}
+#rx button{background:none;border:0;color:inherit;font-size:22px;line-height:1;cursor:pointer;padding:4px 6px;opacity:.7}
+@keyframes rxin{from{opacity:0;transform:translate(-50%,20px)}}
+@media (prefers-reduced-motion:reduce){#rx{animation:none}}
+</style>
+<script>
+(function(){
+ if(!/[?&]rx\b/.test(location.search)) return;
+ var box=document.getElementById("rx"), t=document.getElementById("rx-t");
+ var TX={ru:"Вы пришли по рецепту доктора Шмита! <b>−300 ₽</b> на любую пару — напишите в чат слово <b>РЕЦЕПТ</b> (до 31.12.2026).",
+         en:"You came with Dr. Shmit's prescription! <b>−300 ₽</b> off any pair — just type <b>РЕЦЕПТ</b> in the chat (until 31.12.2026)."};
+ function draw(){ t.innerHTML=TX[(typeof lang!=="undefined"&&lang==="en")?"en":"ru"]; }
+ draw(); box.hidden=false;
+ document.querySelectorAll(".lang button").forEach(function(b){b.addEventListener("click",function(){setTimeout(draw,0);});});
+ document.getElementById("rx-x").addEventListener("click",function(){box.hidden=true;});
+})();
+</script>
 </body>
 </html>

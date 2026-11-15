@@ -355,7 +355,7 @@ dialog::backdrop{background:rgba(14,9,6,.62);backdrop-filter:blur(3px)}
       <ul id="d-feat"></ul>
       <div><div class="lbl" data-i="d_sizes"></div><div class="sizes" id="d-sizes"></div></div>
       <div class="price" id="d-price"></div>
-      <p class="note" data-i="d_note" style="margin:0"></p>
+      <p class="note" id="d-note" data-i="d_note" style="margin:0"></p>
       <div class="btns">
         <a class="btn primary" id="d-tg" href="https://t.me/drshmit_msk" target="_blank" rel="noopener" data-i="d_tg"></a>
         <a class="btn ghost" id="d-avito" href="#" target="_blank" rel="noopener" data-i="d_av"></a>
@@ -372,7 +372,7 @@ const T={
   hero_cta1:"Смотреть модели",hero_cta2:"Написать в Telegram",route_from:"Тегеран",route_to:"Москва",route_days:"в наличии",
   seal:"верх +<br>подкладка<br>— кожа",
   f1b:"100% кожа",f1s:"верх и подкладка",f2b:"Примерка",f2s:"перед оплатой",f3b:"Вся Россия",f3s:"Авито Доставка с примеркой",f4s:"рейтинг продавца на Авито, документы проверены",
-  cat_eyebrow:"Коллекция осень–зима",cat_title:"16 моделей из натуральной кожи",f_all:"Все",f_men:"Мужские",f_women:"Женские",more:"Подробнее →",
+  cat_eyebrow:"Вся коллекция",cat_title:"25 моделей из натуральной кожи",f_all:"Все",f_men:"Мужские",f_women:"Женские",more:"Подробнее →",
   size_eyebrow:"Подбор размера",size_title:"Измерьте стопу — подскажем размер",size_label:"Длина стопы, см",size_res:"Ваш размер",
   size_how:"Как измерить: встаньте на лист бумаги, отметьте пятку и самый длинный палец, измерьте линейкой. Меряйте вечером — стопа чуть больше.",
   size_note:"Таблица ориентировочная. Напишите нам длину стопы — подтвердим размер по конкретной модели.",t_ru:"Размер RU",t_eu:"EU",t_cm:"Стопа, см",
@@ -386,7 +386,7 @@ const T={
   ct_av:"Отзывы, Авито Доставка и безопасная оплата",ct_ph_k:"Телефон",ct_ph:"Лучше писать в Telegram",copy:"Скопировать",copied:"Скопировано",
   ct_mt_k:"Встреча",ct_mt_v:"м. Филатов Луг",ct_mt:"Москва · примерка на месте",ct_dl_k:"Доставка",ct_dl_v:"Вся Россия",ct_dl:"Авито Доставка: СДЭК, Почта, Яндекс, 5Post",
   foot:"натуральная кожаная обувь из Ирана",foot2:"Москва · м. Филатов Луг",
-  d_sizes:"Размеры",d_note:"В наличии в Москве · примерка перед оплатой",d_tg:"Заказать в Telegram",d_av:"Смотреть на Авито",tgonly:"Заказ в Telegram",tgmsg:"Здравствуйте! Интересует модель ",
+  d_sizes:"Размеры",d_note:"В наличии в Москве · примерка перед оплатой",d_note_ask:"Наличие размера уточняйте · примерка перед оплатой",d_tg:"Заказать в Telegram",d_av:"Смотреть на Авито",tgonly:"Заказ в Telegram",tgmsg:"Здравствуйте! Интересует модель ",
   men:"Мужские",women:"Женские"},
  en:{nav_cat:"Catalogue",nav_men:"Men",nav_women:"Women",nav_size:"Size",nav_order:"How to order",nav_contacts:"Contacts",
   hero_eyebrow:"Genuine leather · Iran · Moscow",hero_title:"Shoes made of <em>real</em> leather — outside and in",
@@ -394,7 +394,7 @@ const T={
   hero_cta1:"See the styles",hero_cta2:"Message on Telegram",route_from:"Tehran",route_to:"Moscow",route_days:"in stock",
   seal:"upper +<br>lining<br>— leather",
   f1b:"100% leather",f1s:"upper and lining",f2b:"Try on",f2s:"before you pay",f3b:"All of Russia",f3s:"Avito Delivery with try-on",f4s:"seller rating on Avito, ID verified",
-  cat_eyebrow:"Autumn–winter collection",cat_title:"16 genuine-leather styles",f_all:"All",f_men:"Men",f_women:"Women",more:"Details →",
+  cat_eyebrow:"Full collection",cat_title:"25 genuine-leather styles",f_all:"All",f_men:"Men",f_women:"Women",more:"Details →",
   size_eyebrow:"Size finder",size_title:"Measure your foot — we’ll suggest a size",size_label:"Foot length, cm",size_res:"Your size",
   size_how:"How to measure: stand on paper, mark your heel and longest toe, measure with a ruler. Measure in the evening, when feet are slightly larger.",
   size_note:"The chart is approximate. Send us your foot length and we’ll confirm the size for the exact model.",t_ru:"RU size",t_eu:"EU",t_cm:"Foot, cm",
@@ -408,7 +408,7 @@ const T={
   ct_av:"Reviews, Avito Delivery and safe payment",ct_ph_k:"Phone",ct_ph:"Telegram is the fastest way",copy:"Copy",copied:"Copied",
   ct_mt_k:"Meet-up",ct_mt_v:"Filatov Lug metro",ct_mt:"Moscow · try on in person",ct_dl_k:"Delivery",ct_dl_v:"All of Russia",ct_dl:"Avito Delivery: CDEK, Russian Post, Yandex, 5Post",
   foot:"genuine leather shoes from Iran",foot2:"Moscow · Filatov Lug metro",
-  d_sizes:"Sizes",d_note:"In stock in Moscow · try on before you pay",d_tg:"Order on Telegram",d_av:"View on Avito",tgonly:"Order via Telegram",tgmsg:"Hi! I’m interested in model ",
+  d_sizes:"Sizes",d_note:"In stock in Moscow · try on before you pay",d_note_ask:"Ask us which sizes are in stock · try on before you pay",d_tg:"Order on Telegram",d_av:"View on Avito",tgonly:"Order via Telegram",tgmsg:"Hi! I’m interested in model ",
   men:"Men",women:"Women"}
 };
 const P=[
@@ -475,7 +475,43 @@ const P=[
  {code:"W11",g:"women",price:5990,sizes:[36, 37, 38, 39, 40, 41],avito:"",
   img:["w11_01_cover", "w11_02_angle"],
   ru:{n:"Туфли-слипоны на невысоком каблуке",s:["Демисезон", "Классика"],f:["Верх и подкладка — натуральная кожа", "Без застёжек — легко надевать", "Невысокий устойчивый каблук"]},
-  en:{n:"Low-heel slip-on shoes",s:["Mid-season", "Classic"],f:["Genuine leather upper and lining", "No fastenings — easy on", "Low, stable block heel"]}}
+  en:{n:"Low-heel slip-on shoes",s:["Mid-season", "Classic"],f:["Genuine leather upper and lining", "No fastenings — easy on", "Low, stable block heel"]}},
+ {code:"M05",g:"men",price:6490,sizes:[40, 41, 42, 43, 44, 45],avito:"",ask:true,
+  img:["m05_01_cover", "m05_02_detail"],
+  ru:{n:"Слипоны на утолщённой подошве",s:["Демисезон", "На каждый день"],f:["Верх и подкладка — натуральная кожа", "Без шнурков: эластичные вставки, легко надевать", "Зернистая кожа, утолщённая подошва"]},
+  en:{n:"Thick-sole slip-ons",s:["Mid-season", "Everyday"],f:["Genuine leather upper and lining", "No laces: elastic gussets, easy on and off", "Pebbled leather, thick sole"]}},
+ {code:"W02",g:"women",price:5990,sizes:[36, 37, 38, 39, 40, 41],avito:"",ask:true,
+  img:["w02_01_cover", "w02_02_detail"],
+  ru:{n:"Туфли-лодочки на устойчивом каблуке",s:["Классика", "Офис"],f:["Верх и подкладка — натуральная кожа", "Широкий устойчивый каблук", "Красная кожаная подкладка"]},
+  en:{n:"Block-heel pumps",s:["Classic", "Office"],f:["Genuine leather upper and lining", "Wide, stable block heel", "Red leather lining"]}},
+ {code:"M06",g:"men",price:6490,sizes:[40, 41, 42, 43, 44, 45],avito:"",ask:true,
+  img:["m06_01_cover", "m06_02_detail"],
+  ru:{n:"Кроссовки кожаные с перфорацией",s:["Весна–осень", "Кэжуал"],f:["Верх и подкладка — натуральная кожа", "Перфорация — нога дышит", "Толстая рельефная подошва, шнуровка"]},
+  en:{n:"Perforated leather sneakers",s:["Spring–autumn", "Casual"],f:["Genuine leather upper and lining", "Perforated leather that breathes", "Thick textured sole, lace-up"]}},
+ {code:"W03",g:"women",price:6490,sizes:[36, 37, 38, 39, 40, 41],avito:"",ask:true,
+  img:["w03_01_cover", "w03_02_detail"],
+  ru:{n:"Ботильоны низкие на каблуке",s:["Демисезон", "Офис"],f:["Верх и подкладка — натуральная кожа", "Молния сбоку — легко надевать", "Задник с тиснением под рептилию, устойчивый каблук"]},
+  en:{n:"Low-cut heeled ankle boots",s:["Mid-season", "Office"],f:["Genuine leather upper and lining", "Side zip — easy on", "Reptile-embossed back, stable block heel"]}},
+ {code:"M07",g:"men",price:6490,sizes:[40, 41, 42, 43, 44, 45],avito:"",ask:true,
+  img:["m07_01_cover", "m07_02_detail"],
+  ru:{n:"Кроссовки кожаные стёганые",s:["Весна–осень", "Кэжуал"],f:["Верх и подкладка — натуральная кожа", "Стёганая кожа, полностью чёрные", "Толстая подошва, шнуровка"]},
+  en:{n:"Quilted leather sneakers",s:["Spring–autumn", "Casual"],f:["Genuine leather upper and lining", "Quilted leather, all black", "Thick sole, lace-up"]}},
+ {code:"W04",g:"women",price:5990,sizes:[36, 37, 38, 39, 40, 41],avito:"",ask:true,
+  img:["w04_01_cover", "w04_02_detail"],
+  ru:{n:"Кеды кожаные на платформе",s:["Весна–осень", "Кэжуал"],f:["Верх и подкладка — натуральная кожа", "Белая платформа и белые шнурки", "Зернистая кожа, петля на пятке"]},
+  en:{n:"Leather platform sneakers",s:["Spring–autumn", "Casual"],f:["Genuine leather upper and lining", "White platform sole and white laces", "Pebbled leather, heel pull tab"]}},
+ {code:"M08",g:"men",price:6490,sizes:[40, 41, 42, 43, 44, 45],avito:"",ask:true,
+  img:["m08_01_cover", "m08_02_angle", "m08_03_angle"],
+  ru:{n:"Слипоны «крокодил» на белой подошве",s:["Весна–лето", "Кэжуал"],f:["Верх и подкладка — натуральная кожа", "Тиснение под крокодила, чёрный цвет", "Без шнурков, белая подошва"]},
+  en:{n:"Croc-embossed slip-ons, white sole",s:["Spring–summer", "Casual"],f:["Genuine leather upper and lining", "Croc-embossed leather, black", "Slip-on, white sole"]}},
+ {code:"W09",g:"women",price:5990,sizes:[36, 37, 38, 39, 40, 41],avito:"",ask:true,
+  img:["w09_01_cover", "w09_02_detail"],
+  ru:{n:"Туфли с эластичными вставками на низком каблуке",s:["Демисезон", "На каждый день"],f:["Верх и подкладка — натуральная кожа", "Эластичные вставки — надеваются без застёжек", "Низкий устойчивый каблук"]},
+  en:{n:"Low-heel shoes with elastic gussets",s:["Mid-season", "Everyday"],f:["Genuine leather upper and lining", "Elastic gussets — no fastenings", "Low, stable heel"]}},
+ {code:"M09",g:"men",price:6490,sizes:[40, 41, 42, 43, 44, 45],avito:"",ask:true,
+  img:["m09_01_cover", "m09_02_angle", "m09_03_angle"],
+  ru:{n:"Слипоны «крокодил» серо-синие",s:["Весна–лето", "Кэжуал"],f:["Верх и подкладка — натуральная кожа", "Тиснение под крокодила, серо-синий цвет", "Без шнурков, белая подошва"]},
+  en:{n:"Grey-blue croc slip-ons, white sole",s:["Spring–summer", "Casual"],f:["Genuine leather upper and lining", "Croc-embossed leather, grey-blue", "Slip-on, white sole"]}}
 ];
 const CHART={men:[[40,41,26.0],[41,42,26.5],[42,43,27.0],[43,44,28.0],[44,45,28.5],[45,46,29.0]],women:[[36,37,23.5],[37,38,24.0],[38,39,24.5],[39,40,25.0],[40,41,26.0],[41,42,26.5]]};
 let lang="ru", filter="all", gender="men", cur=null, idx=0;
@@ -512,6 +548,7 @@ function openP(p,i,keep){
   $("#d-feat").innerHTML=L.f.map(f=>`<li>${f}</li>`).join("");
   $("#d-sizes").innerHTML=p.sizes.map(s=>`<span>${s}</span>`).join("");
   $("#d-price").textContent=rub(p.price);
+  $("#d-note").textContent=T[lang][p.ask?"d_note_ask":"d_note"];
   $("#d-prev").hidden=$("#d-next").hidden=p.img.length<2;
   $("#d-avito").href=p.avito||"#"; $("#d-avito").hidden=!p.avito;
   $("#d-tg").href="https://t.me/drshmit_msk?text="+encodeURIComponent(T[lang].tgmsg+p.code+" — "+L.n);

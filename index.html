@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link rel="icon" href="img/logo.png">
 <meta name="theme-color" content="#16100c">
-<meta property="og:title" content="Dr. Shmit — натуральная кожаная обувь и куртки">
+<meta property="og:title" content="Dr. Shmit — натуральная кожаная обувь">
 <meta property="og:description" content="Мужские и женские модели из натуральной кожи. Москва, м. Филатов Луг · доставка по России.">
 <meta property="og:image" content="https://drshmit.github.io/img/og-banner.jpg">
 <meta property="og:image:width" content="1200">
@@ -16,7 +16,7 @@
 <meta property="og:locale" content="ru_RU">
 <meta name="twitter:card" content="summary_large_image">
 <title>Dr. Shmit Shoes</title>
-<meta name="description" content="Dr. Shmit — натуральная кожаная обувь и мужские кожаные куртки из Ирана. Москва, м. Филатов Луг.">
+<meta name="description" content="Dr. Shmit — натуральная кожаная обувь из Ирана. Москва, м. Филатов Луг.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
@@ -205,8 +205,6 @@ dialog::backdrop{background:rgba(14,9,6,.62);backdrop-filter:blur(3px)}
 .info ul{margin:0;padding-left:18px;color:var(--muted)}
 .info li{margin:4px 0}
 .chip.tg{border-color:var(--gold-soft);color:var(--gold)}
-.new-pill{display:inline-flex;align-items:center;margin-top:18px;font:600 13px var(--body);letter-spacing:.02em;color:var(--gold);border:1px solid var(--gold-soft);border-radius:999px;padding:8px 14px;text-decoration:none;transition:background .2s,color .2s}
-.new-pill:hover{background:var(--gold);color:var(--bg)}
 .btn[hidden],.nav-arrow[hidden]{display:none}
 .sizes{display:flex;flex-wrap:wrap;gap:6px}
 .sizes span{font:500 13px var(--mono);border:1px solid var(--line);border-radius:8px;padding:6px 9px}
@@ -228,7 +226,6 @@ dialog::backdrop{background:rgba(14,9,6,.62);backdrop-filter:blur(3px)}
       <a href="#catalog" data-i="nav_cat"></a>
       <a href="#catalog" data-filter-link="men" data-i="nav_men"></a>
       <a href="#catalog" data-filter-link="women" data-i="nav_women"></a>
-      <a href="#catalog" data-filter-link="jacket" data-i="nav_jacket"></a>
       <a href="#size" data-i="nav_size"></a>
       <a href="#order" data-i="nav_order"></a>
       <a href="#contacts" data-i="nav_contacts"></a>
@@ -252,7 +249,6 @@ dialog::backdrop{background:rgba(14,9,6,.62);backdrop-filter:blur(3px)}
           <a class="btn primary" href="#catalog" data-i="hero_cta1"></a>
           <a class="btn ghost" href="https://t.me/drshmit_msk" target="_blank" rel="noopener" data-i="hero_cta2"></a>
         </div>
-        <a class="new-pill" href="#catalog" data-filter-link="jacket" data-i="hero_new"></a>
         <div class="route"><span data-i="route_from"></span><i></i><span data-i="route_to"></span><span>·</span><span data-i="route_days"></span></div>
       </div>
       <div class="hero-art reveal" style="animation-delay:.12s">
@@ -278,7 +274,6 @@ dialog::backdrop{background:rgba(14,9,6,.62);backdrop-filter:blur(3px)}
           <button type="button" id="f-all" data-f="all" aria-pressed="true" data-i="f_all"></button>
           <button type="button" id="f-men" data-f="men" aria-pressed="false" data-i="f_men"></button>
           <button type="button" id="f-women" data-f="women" aria-pressed="false" data-i="f_women"></button>
-          <button type="button" id="f-jacket" data-f="jacket" aria-pressed="false" data-i="f_jacket"></button>
         </div>
       </div>
       <div class="grid" id="grid"></div>
@@ -377,7 +372,7 @@ const T={
   hero_cta1:"Смотреть модели",hero_cta2:"Написать в Telegram",route_from:"Тегеран",route_to:"Москва",route_days:"в наличии",
   seal:"верх +<br>подкладка<br>— кожа",
   f1b:"100% кожа",f1s:"верх и подкладка",f2b:"Примерка",f2s:"перед оплатой",f3b:"Вся Россия",f3s:"Авито Доставка с примеркой",f4s:"рейтинг продавца на Авито, документы проверены",
-  cat_eyebrow:"Вся коллекция",cat_title:"25 моделей обуви и 8 курток из натуральной кожи",f_all:"Все",f_men:"Мужские",f_women:"Женские",more:"Подробнее →",
+  cat_eyebrow:"Вся коллекция",cat_title:"25 моделей из натуральной кожи",f_all:"Все",f_men:"Мужские",f_women:"Женские",more:"Подробнее →",
   size_eyebrow:"Подбор размера",size_title:"Измерьте стопу — подскажем размер",size_label:"Длина стопы, см",size_res:"Ваш размер",
   size_how:"Как измерить: встаньте на лист бумаги, отметьте пятку и самый длинный палец, измерьте линейкой. Меряйте вечером — стопа чуть больше.",
   size_note:"Таблица ориентировочная. Напишите нам длину стопы — подтвердим размер по конкретной модели.",t_ru:"Размер RU",t_eu:"EU",t_cm:"Стопа, см",
@@ -392,14 +387,14 @@ const T={
   ct_mt_k:"Встреча",ct_mt_v:"м. Филатов Луг",ct_mt:"Москва · примерка на месте",ct_dl_k:"Доставка",ct_dl_v:"Вся Россия",ct_dl:"Авито Доставка: СДЭК, Почта, Яндекс, 5Post",
   foot:"натуральная кожаная обувь из Ирана",foot2:"Москва · м. Филатов Луг",
   d_sizes:"Размеры",d_note:"В наличии в Москве · примерка перед оплатой",d_note_ask:"Наличие размера уточняйте · примерка перед оплатой",d_tg:"Заказать в Telegram",d_av:"Смотреть на Авито",tgonly:"Заказ в Telegram",tgmsg:"Здравствуйте! Интересует модель ",
-  men:"Мужские",women:"Женские",jacket:"Мужские куртки",f_jacket:"Куртки",nav_jacket:"Куртки",hero_new:"Новинка: мужские кожаные куртки →",d_note_pre:"Под заказ из Тегерана · 10–14 дней · примерка перед оплатой"},
+  men:"Мужские",women:"Женские"},
  en:{nav_cat:"Catalogue",nav_men:"Men",nav_women:"Women",nav_size:"Size",nav_order:"How to order",nav_contacts:"Contacts",
   hero_eyebrow:"Genuine leather · Iran · Moscow",hero_title:"Shoes made of <em>real</em> leather — outside and in",
   hero_lead:"Dr. Shmit men’s and women’s styles with a genuine leather upper and lining. Try them on at Filatov Lug metro or get delivery anywhere in Russia.",
   hero_cta1:"See the styles",hero_cta2:"Message on Telegram",route_from:"Tehran",route_to:"Moscow",route_days:"in stock",
   seal:"upper +<br>lining<br>— leather",
   f1b:"100% leather",f1s:"upper and lining",f2b:"Try on",f2s:"before you pay",f3b:"All of Russia",f3s:"Avito Delivery with try-on",f4s:"seller rating on Avito, ID verified",
-  cat_eyebrow:"Full collection",cat_title:"25 shoe styles and 8 jackets in genuine leather",f_all:"All",f_men:"Men",f_women:"Women",more:"Details →",
+  cat_eyebrow:"Full collection",cat_title:"25 genuine-leather styles",f_all:"All",f_men:"Men",f_women:"Women",more:"Details →",
   size_eyebrow:"Size finder",size_title:"Measure your foot — we’ll suggest a size",size_label:"Foot length, cm",size_res:"Your size",
   size_how:"How to measure: stand on paper, mark your heel and longest toe, measure with a ruler. Measure in the evening, when feet are slightly larger.",
   size_note:"The chart is approximate. Send us your foot length and we’ll confirm the size for the exact model.",t_ru:"RU size",t_eu:"EU",t_cm:"Foot, cm",
@@ -414,7 +409,7 @@ const T={
   ct_mt_k:"Meet-up",ct_mt_v:"Filatov Lug metro",ct_mt:"Moscow · try on in person",ct_dl_k:"Delivery",ct_dl_v:"All of Russia",ct_dl:"Avito Delivery: CDEK, Russian Post, Yandex, 5Post",
   foot:"genuine leather shoes from Iran",foot2:"Moscow · Filatov Lug metro",
   d_sizes:"Sizes",d_note:"In stock in Moscow · try on before you pay",d_note_ask:"Ask us which sizes are in stock · try on before you pay",d_tg:"Order on Telegram",d_av:"View on Avito",tgonly:"Order via Telegram",tgmsg:"Hi! I’m interested in model ",
-  men:"Men",women:"Women",jacket:"Men’s jackets",f_jacket:"Jackets",nav_jacket:"Jackets",hero_new:"New: men’s leather jackets →",d_note_pre:"Made to order from Tehran · 10–14 days · try on before you pay"}
+  men:"Men",women:"Women"}
 };
 const P=[
  {code:"M01",g:"men",price:7490,sizes:[40,41,42,43,44,45],avito:"https://www.avito.ru/moskovskaya_oblast_moskovskiy/odezhda_obuv_aksessuary/botinki_chelsi_muzhskie_naturalnaya_kozha_uteplennye_8485823603",
@@ -516,39 +511,7 @@ const P=[
  {code:"M09",g:"men",price:6490,sizes:[40, 41, 42, 43, 44, 45],avito:"",ask:true,
   img:["m09_01_cover", "m09_02_angle", "m09_03_angle"],
   ru:{n:"Слипоны «крокодил» серо-синие",s:["Весна–лето", "Кэжуал"],f:["Верх и подкладка — натуральная кожа", "Тиснение под крокодила, серо-синий цвет", "Без шнурков, белая подошва"]},
-  en:{n:"Grey-blue croc slip-ons, white sole",s:["Spring–summer", "Casual"],f:["Genuine leather upper and lining", "Croc-embossed leather, grey-blue", "Slip-on, white sole"]}},
- {code:"J01",g:"jacket",price:19990,sizes:[48, 50, 52, 54, 56],avito:"",pre:true,
-  img:["j01_01_cover", "j01_02_detail"],
-  ru:{n:"Куртка со стёгаными плечами",s:["Демисезон", "Кэжуал"],f:["Натуральная кожа", "Стёганые плечи и рукава", "Воротник-стойка, нагрудный карман на молнии", "Размеры 48–56 (M–3XL) — подскажем по обхвату груди"]},
-  en:{n:"Jacket with quilted shoulders",s:["Mid-season", "Casual"],f:["Genuine leather", "Quilted shoulders and sleeves", "Stand collar, zip chest pocket", "Sizes 48–56 (M–3XL) — we’ll help by chest size"]}},
- {code:"J02",g:"jacket",price:19990,sizes:[48, 50, 52, 54, 56],avito:"",pre:true,
-  img:["j02_01_cover", "j02_02_detail"],
-  ru:{n:"Куртка стёганая «в клетку»",s:["Демисезон", "Кэжуал"],f:["Натуральная кожа", "Стёжка-клетка по всей куртке", "Воротник-стойка, молния", "Размеры 48–56 (M–3XL) — подскажем по обхвату груди"]},
-  en:{n:"Grid-quilted jacket",s:["Mid-season", "Casual"],f:["Genuine leather", "Grid quilting all over", "Stand collar, full zip", "Sizes 48–56 (M–3XL) — we’ll help by chest size"]}},
- {code:"J03",g:"jacket",price:19990,sizes:[48, 50, 52, 54, 56],avito:"",pre:true,
-  img:["j03_01_cover", "j03_02_detail"],
-  ru:{n:"Куртка-пиджак чёрная",s:["Демисезон", "Классика"],f:["Натуральная кожа", "Отложной воротник с лацканами", "Застёжка на пуговицы, длина до бедра", "Размеры 48–56 (M–3XL) — подскажем по обхвату груди"]},
-  en:{n:"Black leather blazer jacket",s:["Mid-season", "Classic"],f:["Genuine leather", "Notch lapels", "Button front, hip length", "Sizes 48–56 (M–3XL) — we’ll help by chest size"]}},
- {code:"J04",g:"jacket",price:19990,sizes:[48, 50, 52, 54, 56],avito:"",pre:true,
-  img:["j04_01_cover", "j04_02_detail"],
-  ru:{n:"Куртка-пиджак коричневая",s:["Демисезон", "Классика"],f:["Натуральная кожа", "Отложной воротник с лацканами, отстрочка", "Застёжка на пуговицы, длина до бедра", "Размеры 48–56 (M–3XL) — подскажем по обхвату груди"]},
-  en:{n:"Brown leather blazer jacket",s:["Mid-season", "Classic"],f:["Genuine leather", "Notch lapels, topstitching", "Button front, hip length", "Sizes 48–56 (M–3XL) — we’ll help by chest size"]}},
- {code:"J05",g:"jacket",price:19990,sizes:[48, 50, 52, 54, 56],avito:"",pre:true,
-  img:["j05_01_cover", "j05_02_detail"],
-  ru:{n:"Полупальто с поясом",s:["Демисезон", "Классика"],f:["Натуральная кожа", "Удлинённая модель с поясом", "Лацканы, пуговицы, карманы с клапанами", "Размеры 48–56 (M–3XL) — подскажем по обхвату груди"]},
-  en:{n:"Belted leather car coat",s:["Mid-season", "Classic"],f:["Genuine leather", "Longer cut with a belt", "Lapels, buttons, flap pockets", "Sizes 48–56 (M–3XL) — we’ll help by chest size"]}},
- {code:"J06",g:"jacket",price:19990,sizes:[48, 50, 52, 54, 56],avito:"",pre:true,
-  img:["j06_01_cover", "j06_02_detail"],
-  ru:{n:"Косуха со стёгаными рукавами",s:["Демисезон", "Кэжуал"],f:["Натуральная кожа", "Косая молния, воротник на кнопках", "Стёганые рукава, карманы на молнии", "Размеры 48–56 (M–3XL) — подскажем по обхвату груди"]},
-  en:{n:"Biker jacket with quilted sleeves",s:["Mid-season", "Casual"],f:["Genuine leather", "Asymmetric zip, snap collar", "Quilted sleeves, zip pockets", "Sizes 48–56 (M–3XL) — we’ll help by chest size"]}},
- {code:"J07",g:"jacket",price:19990,sizes:[48, 50, 52, 54, 56],avito:"",pre:true,
-  img:["j07_01_cover", "j07_02_detail"],
-  ru:{n:"Куртка коричневая с воротником-стойкой",s:["Демисезон", "Кэжуал"],f:["Натуральная кожа", "Воротник-стойка, молния", "Лаконичный прямой крой", "Размеры 48–56 (M–3XL) — подскажем по обхвату груди"]},
-  en:{n:"Brown stand-collar jacket",s:["Mid-season", "Casual"],f:["Genuine leather", "Stand collar, full zip", "Clean straight cut", "Sizes 48–56 (M–3XL) — we’ll help by chest size"]}},
- {code:"J08",g:"jacket",price:19990,sizes:[48, 50, 52, 54, 56],avito:"",pre:true,
-  img:["j08_01_cover", "j08_02_detail"],
-  ru:{n:"Куртка с контрастным кантом",s:["Демисезон", "Кэжуал"],f:["Натуральная кожа", "Серый кант на груди", "Воротник-стойка, молния", "Размеры 48–56 (M–3XL) — подскажем по обхвату груди"]},
-  en:{n:"Jacket with contrast piping",s:["Mid-season", "Casual"],f:["Genuine leather", "Grey piping across the chest", "Stand collar, full zip", "Sizes 48–56 (M–3XL) — we’ll help by chest size"]}}
+  en:{n:"Grey-blue croc slip-ons, white sole",s:["Spring–summer", "Casual"],f:["Genuine leather upper and lining", "Croc-embossed leather, grey-blue", "Slip-on, white sole"]}}
 ];
 const CHART={men:[[40,41,26.0],[41,42,26.5],[42,43,27.0],[43,44,28.0],[44,45,28.5],[45,46,29.0]],women:[[36,37,23.5],[37,38,24.0],[38,39,24.5],[39,40,25.0],[40,41,26.0],[41,42,26.5]]};
 let lang="ru", filter="all", gender="men", cur=null, idx=0;
@@ -585,7 +548,7 @@ function openP(p,i,keep){
   $("#d-feat").innerHTML=L.f.map(f=>`<li>${f}</li>`).join("");
   $("#d-sizes").innerHTML=p.sizes.map(s=>`<span>${s}</span>`).join("");
   $("#d-price").textContent=rub(p.price);
-  $("#d-note").textContent=T[lang][p.pre?"d_note_pre":p.ask?"d_note_ask":"d_note"];
+  $("#d-note").textContent=T[lang][p.ask?"d_note_ask":"d_note"];
   $("#d-prev").hidden=$("#d-next").hidden=p.img.length<2;
   $("#d-avito").href=p.avito||"#"; $("#d-avito").hidden=!p.avito;
   $("#d-tg").href="https://t.me/drshmit_msk?text="+encodeURIComponent(T[lang].tgmsg+p.code+" — "+L.n);

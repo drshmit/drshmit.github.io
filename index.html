@@ -205,6 +205,8 @@ dialog::backdrop{background:rgba(14,9,6,.62);backdrop-filter:blur(3px)}
 .info ul{margin:0;padding-left:18px;color:var(--muted)}
 .info li{margin:4px 0}
 .chip.tg{border-color:var(--gold-soft);color:var(--gold)}
+.chip.in{border-color:#5f9b6a;color:#7fbf8a}
+.sizes span.in{border-color:#5f9b6a;color:#7fbf8a;font-weight:700}
 .btn[hidden],.nav-arrow[hidden]{display:none}
 .sizes{display:flex;flex-wrap:wrap;gap:6px}
 .sizes span{font:500 13px var(--mono);border:1px solid var(--line);border-radius:8px;padding:6px 9px}
@@ -274,6 +276,7 @@ dialog::backdrop{background:rgba(14,9,6,.62);backdrop-filter:blur(3px)}
           <button type="button" id="f-all" data-f="all" aria-pressed="true" data-i="f_all"></button>
           <button type="button" id="f-men" data-f="men" aria-pressed="false" data-i="f_men"></button>
           <button type="button" id="f-women" data-f="women" aria-pressed="false" data-i="f_women"></button>
+          <button type="button" id="f-stock" data-f="stock" aria-pressed="false" data-i="f_stock"></button>
         </div>
       </div>
       <div class="grid" id="grid"></div>
@@ -369,7 +372,7 @@ const T={
  ru:{nav_cat:"Каталог",nav_men:"Мужские",nav_women:"Женские",nav_size:"Размер",nav_order:"Как заказать",nav_contacts:"Контакты",
   hero_eyebrow:"Натуральная кожа · Иран · Москва",hero_title:"Обувь из <em>настоящей</em> кожи — и снаружи, и внутри",
   hero_lead:"Мужские и женские модели Dr. Shmit: верх и подкладка из натуральной кожи. Примерка у м. Филатов Луг или доставка по всей России.",
-  hero_cta1:"Смотреть модели",hero_cta2:"Написать в Telegram",route_from:"Тегеран",route_to:"Москва",route_days:"в наличии",
+  hero_cta1:"Смотреть модели",hero_cta2:"Написать в Telegram",route_from:"Тегеран",route_to:"Москва",route_days:"7–10 дней",
   seal:"верх +<br>подкладка<br>— кожа",
   f1b:"100% кожа",f1s:"верх и подкладка",f2b:"Примерка",f2s:"перед оплатой",f3b:"Вся Россия",f3s:"Авито Доставка с примеркой",f4s:"рейтинг продавца на Авито, документы проверены",
   cat_eyebrow:"Вся коллекция",cat_title:"25 моделей из натуральной кожи",f_all:"Все",f_men:"Мужские",f_women:"Женские",more:"Подробнее →",
@@ -377,21 +380,21 @@ const T={
   size_how:"Как измерить: встаньте на лист бумаги, отметьте пятку и самый длинный палец, измерьте линейкой. Меряйте вечером — стопа чуть больше.",
   size_note:"Таблица ориентировочная. Напишите нам длину стопы — подтвердим размер по конкретной модели.",t_ru:"Размер RU",t_eu:"EU",t_cm:"Стопа, см",
   between:"между размерами — берите больший",out:"напишите нам, подберём",
-  order_eyebrow:"В наличии в Москве",order_title:"Как заказать",
+  order_eyebrow:"В наличии и под заказ",order_title:"Как заказать",
   s1h:"Выберите пару",s1p:"Посмотрите модели и фото. Понравилась — запомните код (M01, W12…).",
   s2h:"Напишите нам",s2p:"В Telegram @drshmit_msk или на Авито: модель и длина стопы в см. Сделаем скидку для вас.",
-  s3h:"Договоримся о встрече",s3p:"Пара уже в Москве. Выберем удобное время у м. Филатов Луг или отправим Авито Доставкой.",
+  s3h:"Договоримся о встрече",s3p:"Пара в наличии — встретимся у м. Филатов Луг или отправим Авито Доставкой. Под заказ — привезём из Тегерана за 7–10 дней и напишем, когда пара в Москве.",
   s4h:"Примерка и оплата",s4p:"Встреча у м. Филатов Луг — оплата после примерки. Или Авито Доставка с примеркой в пункте выдачи.",
   ct_eyebrow:"На связи каждый день",ct_title:"Контакты",ct_tg:"Заказы и вопросы — отвечаем быстро",ct_ch_k:"Канал",ct_ch:"Все модели и новинки",
   ct_av:"Отзывы, Авито Доставка и безопасная оплата",ct_ph_k:"Телефон",ct_ph:"Лучше писать в Telegram",copy:"Скопировать",copied:"Скопировано",
   ct_mt_k:"Встреча",ct_mt_v:"м. Филатов Луг",ct_mt:"Москва · примерка на месте",ct_dl_k:"Доставка",ct_dl_v:"Вся Россия",ct_dl:"Авито Доставка: СДЭК, Почта, Яндекс, 5Post",
   foot:"натуральная кожаная обувь из Ирана",foot2:"Москва · м. Филатов Луг",
-  d_sizes:"Размеры",d_note:"В наличии в Москве · примерка перед оплатой",d_note_ask:"Наличие размера уточняйте · примерка перед оплатой",d_tg:"Заказать в Telegram",d_av:"Смотреть на Авито",tgonly:"Заказ в Telegram",tgmsg:"Здравствуйте! Интересует модель ",
+  d_sizes:"Размеры",d_note:"В наличии в Москве: размеры {s} · другие размеры — под заказ 7–10 дней · примерка перед оплатой",d_note_pre:"Под заказ из Тегерана · 7–10 дней · примерка перед оплатой",chip_in:"В наличии",chip_pre:"Под заказ 7–10 дней",f_stock:"В наличии",d_in:"в наличии",d_tg:"Заказать в Telegram",d_av:"Смотреть на Авито",tgonly:"Заказ в Telegram",tgmsg:"Здравствуйте! Интересует модель ",
   men:"Мужские",women:"Женские"},
  en:{nav_cat:"Catalogue",nav_men:"Men",nav_women:"Women",nav_size:"Size",nav_order:"How to order",nav_contacts:"Contacts",
   hero_eyebrow:"Genuine leather · Iran · Moscow",hero_title:"Shoes made of <em>real</em> leather — outside and in",
   hero_lead:"Dr. Shmit men’s and women’s styles with a genuine leather upper and lining. Try them on at Filatov Lug metro or get delivery anywhere in Russia.",
-  hero_cta1:"See the styles",hero_cta2:"Message on Telegram",route_from:"Tehran",route_to:"Moscow",route_days:"in stock",
+  hero_cta1:"See the styles",hero_cta2:"Message on Telegram",route_from:"Tehran",route_to:"Moscow",route_days:"7–10 days",
   seal:"upper +<br>lining<br>— leather",
   f1b:"100% leather",f1s:"upper and lining",f2b:"Try on",f2s:"before you pay",f3b:"All of Russia",f3s:"Avito Delivery with try-on",f4s:"seller rating on Avito, ID verified",
   cat_eyebrow:"Full collection",cat_title:"25 genuine-leather styles",f_all:"All",f_men:"Men",f_women:"Women",more:"Details →",
@@ -399,20 +402,20 @@ const T={
   size_how:"How to measure: stand on paper, mark your heel and longest toe, measure with a ruler. Measure in the evening, when feet are slightly larger.",
   size_note:"The chart is approximate. Send us your foot length and we’ll confirm the size for the exact model.",t_ru:"RU size",t_eu:"EU",t_cm:"Foot, cm",
   between:"between sizes — take the larger one",out:"message us and we’ll help",
-  order_eyebrow:"In stock in Moscow",order_title:"How to order",
+  order_eyebrow:"In stock and made to order",order_title:"How to order",
   s1h:"Choose a pair",s1p:"Browse the styles and photos. Note the code you like (M01, W12…).",
   s2h:"Message us",s2p:"On Telegram @drshmit_msk or on Avito: the model and your foot length in cm. We’ll give you a discount.",
-  s3h:"Pick a time",s3p:"Your pair is already in Moscow. We’ll meet at Filatov Lug metro at a time that suits you, or send it with Avito Delivery.",
+  s3h:"Pick a time",s3p:"In stock: we meet at Filatov Lug metro or send it with Avito Delivery. Made to order: we bring it from Tehran in 7–10 days and message you when it’s in Moscow.",
   s4h:"Try on and pay",s4p:"Meet at Filatov Lug metro and pay after trying on. Or Avito Delivery with try-on at the pickup point.",
   ct_eyebrow:"Here every day",ct_title:"Contacts",ct_tg:"Orders and questions — quick replies",ct_ch_k:"Channel",ct_ch:"All styles and new arrivals",
   ct_av:"Reviews, Avito Delivery and safe payment",ct_ph_k:"Phone",ct_ph:"Telegram is the fastest way",copy:"Copy",copied:"Copied",
   ct_mt_k:"Meet-up",ct_mt_v:"Filatov Lug metro",ct_mt:"Moscow · try on in person",ct_dl_k:"Delivery",ct_dl_v:"All of Russia",ct_dl:"Avito Delivery: CDEK, Russian Post, Yandex, 5Post",
   foot:"genuine leather shoes from Iran",foot2:"Moscow · Filatov Lug metro",
-  d_sizes:"Sizes",d_note:"In stock in Moscow · try on before you pay",d_note_ask:"Ask us which sizes are in stock · try on before you pay",d_tg:"Order on Telegram",d_av:"View on Avito",tgonly:"Order via Telegram",tgmsg:"Hi! I’m interested in model ",
+  d_sizes:"Sizes",d_note:"In stock in Moscow: sizes {s} · other sizes made to order in 7–10 days · try on before you pay",d_note_pre:"Made to order from Tehran · 7–10 days · try on before you pay",chip_in:"In stock",chip_pre:"Made to order 7–10 days",f_stock:"In stock",d_in:"in stock",d_tg:"Order on Telegram",d_av:"View on Avito",tgonly:"Order via Telegram",tgmsg:"Hi! I’m interested in model ",
   men:"Men",women:"Women"}
 };
 const P=[
- {code:"M01",g:"men",price:7490,sizes:[40,41,42,43,44,45],avito:"https://www.avito.ru/moskovskaya_oblast_moskovskiy/odezhda_obuv_aksessuary/botinki_chelsi_muzhskie_naturalnaya_kozha_uteplennye_8485823603",
+ {code:"M01",g:"men",stock:[41, 42, 43],price:7490,sizes:[40,41,42,43,44,45],avito:"https://www.avito.ru/moskovskaya_oblast_moskovskiy/odezhda_obuv_aksessuary/botinki_chelsi_muzhskie_naturalnaya_kozha_uteplennye_8485823603",
   img:["m01_01_cover","m01_03_angle","m01_07_side","m01_08_zoom-leather"],
   ru:{n:"Челси утеплённые",s:["Демисезон","Зима"],f:["Верх и подкладка — натуральная кожа","Утеплённые — для московской зимы","Эластичные вставки и кожаная петля на пятке"]},
   en:{n:"Insulated Chelsea boots",s:["Autumn","Winter"],f:["Genuine leather upper and lining","Insulated for Moscow winters","Elastic side panels and leather pull tab"]}},
@@ -424,7 +427,7 @@ const P=[
   img:["m12_01_cover","m12_03_angle","m12_04_angle","m12_06_on-foot","m12_05_sole-measure","m12_08_zoom-sole"],
   ru:{n:"Лоферы на толстой подошве",s:["Демисезон"],f:["Верх и подкладка — натуральная кожа","Литая резиновая подошва с протектором","Без шнурков — легко надевать"]},
   en:{n:"Lug-sole loafers",s:["Autumn","Spring"],f:["Genuine leather upper and lining","Cast rubber lug sole","Slip-on, no laces"]}},
- {code:"W08",g:"women",price:5990,sizes:[36,37,38,39,40,41],avito:"https://www.avito.ru/moskovskaya_oblast_moskovskiy/odezhda_obuv_aksessuary/chelsi_zhenskie_naturalnaya_kozha_na_tolstoy_podoshve_8436896904",
+ {code:"W08",g:"women",stock:[37, 38, 39],price:5990,sizes:[36,37,38,39,40,41],avito:"https://www.avito.ru/moskovskaya_oblast_moskovskiy/odezhda_obuv_aksessuary/chelsi_zhenskie_naturalnaya_kozha_na_tolstoy_podoshve_8436896904",
   img:["w08_01_cover","w08_03_angle","w08_06_side","w08_04_zoom-leather","w08_05_zoom-toe"],
   ru:{n:"Челси на тракторной подошве",s:["Демисезон","Зима"],f:["Верх и подкладка — натуральная кожа","Тракторная подошва из полиуретана — лёгкая","Эластичные вставки, петля на пятке"]},
   en:{n:"Chunky-sole Chelsea boots",s:["Autumn","Winter"],f:["Genuine leather upper and lining","Light chunky polyurethane sole","Elastic side panels, heel pull tab"]}},
@@ -432,7 +435,7 @@ const P=[
   img:["m13_01_cover","m13_03_angle","m13_04_angle","m13_06_on-foot","m13_05_sole-measure","m13_08_zoom-sole"],
   ru:{n:"Мокасины на толстой подошве",s:["Демисезон"],f:["Верх и подкладка — натуральная кожа","Мокасиновый шов, литая резиновая подошва","Удобны на каждый день"]},
   en:{n:"Lug-sole moccasins",s:["Autumn","Spring"],f:["Genuine leather upper and lining","Moc-toe seam, cast rubber sole","Made for everyday wear"]}},
- {code:"W05",g:"women",price:6490,sizes:[36,37,38,39,40,41],avito:"https://www.avito.ru/moskovskaya_oblast_moskovskiy/odezhda_obuv_aksessuary/polusapogi_zhenskie_naturalnaya_kozha_steganye_8577684856",
+ {code:"W05",g:"women",stock:[37, 38, 39],price:6490,sizes:[36,37,38,39,40,41],avito:"https://www.avito.ru/moskovskaya_oblast_moskovskiy/odezhda_obuv_aksessuary/polusapogi_zhenskie_naturalnaya_kozha_steganye_8577684856",
   img:["w05_01_cover","w05_03_angle","w05_04_angle","w05_05_zoom-quilting","w05_07_side"],
   ru:{n:"Полусапоги стёганые",s:["Демисезон","Зима"],f:["Верх и подкладка — натуральная кожа","Стёганое голенище, молния сбоку","Лёгкая подошва из полиуретана"]},
   en:{n:"Quilted mid-calf boots",s:["Autumn","Winter"],f:["Genuine leather upper and lining","Quilted shaft with side zip","Lightweight polyurethane sole"]}},
@@ -476,39 +479,39 @@ const P=[
   img:["w11_01_cover", "w11_02_angle"],
   ru:{n:"Туфли-слипоны на невысоком каблуке",s:["Демисезон", "Классика"],f:["Верх и подкладка — натуральная кожа", "Без застёжек — легко надевать", "Невысокий устойчивый каблук"]},
   en:{n:"Low-heel slip-on shoes",s:["Mid-season", "Classic"],f:["Genuine leather upper and lining", "No fastenings — easy on", "Low, stable block heel"]}},
- {code:"M05",g:"men",price:6490,sizes:[40, 41, 42, 43, 44, 45],avito:"",ask:true,
+ {code:"M05",g:"men",price:6490,sizes:[40, 41, 42, 43, 44, 45],avito:"",
   img:["m05_01_cover", "m05_02_detail"],
   ru:{n:"Слипоны на утолщённой подошве",s:["Демисезон", "На каждый день"],f:["Верх и подкладка — натуральная кожа", "Без шнурков: эластичные вставки, легко надевать", "Зернистая кожа, утолщённая подошва"]},
   en:{n:"Thick-sole slip-ons",s:["Mid-season", "Everyday"],f:["Genuine leather upper and lining", "No laces: elastic gussets, easy on and off", "Pebbled leather, thick sole"]}},
- {code:"W02",g:"women",price:5990,sizes:[36, 37, 38, 39, 40, 41],avito:"",ask:true,
+ {code:"W02",g:"women",price:5990,sizes:[36, 37, 38, 39, 40, 41],avito:"",
   img:["w02_01_cover", "w02_02_detail"],
   ru:{n:"Туфли-лодочки на устойчивом каблуке",s:["Классика", "Офис"],f:["Верх и подкладка — натуральная кожа", "Широкий устойчивый каблук", "Красная кожаная подкладка"]},
   en:{n:"Block-heel pumps",s:["Classic", "Office"],f:["Genuine leather upper and lining", "Wide, stable block heel", "Red leather lining"]}},
- {code:"M06",g:"men",price:6490,sizes:[40, 41, 42, 43, 44, 45],avito:"",ask:true,
+ {code:"M06",g:"men",price:6490,sizes:[40, 41, 42, 43, 44, 45],avito:"",
   img:["m06_01_cover", "m06_02_detail"],
   ru:{n:"Кроссовки кожаные с перфорацией",s:["Весна–осень", "Кэжуал"],f:["Верх и подкладка — натуральная кожа", "Перфорация — нога дышит", "Толстая рельефная подошва, шнуровка"]},
   en:{n:"Perforated leather sneakers",s:["Spring–autumn", "Casual"],f:["Genuine leather upper and lining", "Perforated leather that breathes", "Thick textured sole, lace-up"]}},
- {code:"W03",g:"women",price:6490,sizes:[36, 37, 38, 39, 40, 41],avito:"",ask:true,
+ {code:"W03",g:"women",price:6490,sizes:[36, 37, 38, 39, 40, 41],avito:"",
   img:["w03_01_cover", "w03_02_detail"],
   ru:{n:"Ботильоны низкие на каблуке",s:["Демисезон", "Офис"],f:["Верх и подкладка — натуральная кожа", "Молния сбоку — легко надевать", "Задник с тиснением под рептилию, устойчивый каблук"]},
   en:{n:"Low-cut heeled ankle boots",s:["Mid-season", "Office"],f:["Genuine leather upper and lining", "Side zip — easy on", "Reptile-embossed back, stable block heel"]}},
- {code:"M07",g:"men",price:6490,sizes:[40, 41, 42, 43, 44, 45],avito:"",ask:true,
+ {code:"M07",g:"men",price:6490,sizes:[40, 41, 42, 43, 44, 45],avito:"",
   img:["m07_01_cover", "m07_02_detail"],
   ru:{n:"Кроссовки кожаные стёганые",s:["Весна–осень", "Кэжуал"],f:["Верх и подкладка — натуральная кожа", "Стёганая кожа, полностью чёрные", "Толстая подошва, шнуровка"]},
   en:{n:"Quilted leather sneakers",s:["Spring–autumn", "Casual"],f:["Genuine leather upper and lining", "Quilted leather, all black", "Thick sole, lace-up"]}},
- {code:"W04",g:"women",price:5990,sizes:[36, 37, 38, 39, 40, 41],avito:"",ask:true,
+ {code:"W04",g:"women",price:5990,sizes:[36, 37, 38, 39, 40, 41],avito:"",
   img:["w04_01_cover", "w04_02_detail"],
   ru:{n:"Кеды кожаные на платформе",s:["Весна–осень", "Кэжуал"],f:["Верх и подкладка — натуральная кожа", "Белая платформа и белые шнурки", "Зернистая кожа, петля на пятке"]},
   en:{n:"Leather platform sneakers",s:["Spring–autumn", "Casual"],f:["Genuine leather upper and lining", "White platform sole and white laces", "Pebbled leather, heel pull tab"]}},
- {code:"M08",g:"men",price:6490,sizes:[40, 41, 42, 43, 44, 45],avito:"",ask:true,
+ {code:"M08",g:"men",price:6490,sizes:[40, 41, 42, 43, 44, 45],avito:"",
   img:["m08_01_cover", "m08_02_angle", "m08_03_angle"],
   ru:{n:"Слипоны «крокодил» на белой подошве",s:["Весна–лето", "Кэжуал"],f:["Верх и подкладка — натуральная кожа", "Тиснение под крокодила, чёрный цвет", "Без шнурков, белая подошва"]},
   en:{n:"Croc-embossed slip-ons, white sole",s:["Spring–summer", "Casual"],f:["Genuine leather upper and lining", "Croc-embossed leather, black", "Slip-on, white sole"]}},
- {code:"W09",g:"women",price:5990,sizes:[36, 37, 38, 39, 40, 41],avito:"",ask:true,
+ {code:"W09",g:"women",price:5990,sizes:[36, 37, 38, 39, 40, 41],avito:"",
   img:["w09_01_cover", "w09_02_detail"],
   ru:{n:"Туфли с эластичными вставками на низком каблуке",s:["Демисезон", "На каждый день"],f:["Верх и подкладка — натуральная кожа", "Эластичные вставки — надеваются без застёжек", "Низкий устойчивый каблук"]},
   en:{n:"Low-heel shoes with elastic gussets",s:["Mid-season", "Everyday"],f:["Genuine leather upper and lining", "Elastic gussets — no fastenings", "Low, stable heel"]}},
- {code:"M09",g:"men",price:6490,sizes:[40, 41, 42, 43, 44, 45],avito:"",ask:true,
+ {code:"M09",g:"men",price:6490,sizes:[40, 41, 42, 43, 44, 45],avito:"",
   img:["m09_01_cover", "m09_02_angle", "m09_03_angle"],
   ru:{n:"Слипоны «крокодил» серо-синие",s:["Весна–лето", "Кэжуал"],f:["Верх и подкладка — натуральная кожа", "Тиснение под крокодила, серо-синий цвет", "Без шнурков, белая подошва"]},
   en:{n:"Grey-blue croc slip-ons, white sole",s:["Spring–summer", "Casual"],f:["Genuine leather upper and lining", "Croc-embossed leather, grey-blue", "Slip-on, white sole"]}}
@@ -528,13 +531,13 @@ function applyLang(){
 }
 function renderGrid(){
   const g=$("#grid"); g.innerHTML="";
-  P.filter(p=>filter==="all"||p.g===filter).forEach((p,i)=>{
+  P.filter(p=>filter==="all"||(filter==="stock"?!!p.stock:p.g===filter)).sort((a,b)=>(b.stock?1:0)-(a.stock?1:0)).forEach((p,i)=>{
     const L=p[lang];
     const b=document.createElement("button"); b.type="button"; b.className="card reveal"; b.style.animationDelay=(i*0.06)+"s";
     b.setAttribute("aria-label",p.code+" "+L.n);
     b.innerHTML=`<div class="ph"><img src="img/${p.img[0]}.jpg" alt="${L.n}" loading="lazy">${p.img[1]?`<img class="alt" src="img/${p.img[1]}.jpg" alt="" loading="lazy">`:""}<span class="code">${p.code}</span></div>
       <div class="body"><div class="eyebrow">${T[lang][p.g]}</div><h3>${L.n}</h3>
-      <div class="chips">${L.s.map(s=>`<span class="chip">${s}</span>`).join("")}<span class="chip">${p.sizes[0]}–${p.sizes[p.sizes.length-1]}</span>${p.avito?"":`<span class="chip tg">${T[lang].tgonly}</span>`}</div>
+      <div class="chips">${L.s.map(s=>`<span class="chip">${s}</span>`).join("")}<span class="chip">${p.sizes[0]}–${p.sizes[p.sizes.length-1]}</span>${p.stock?`<span class="chip in">${T[lang].chip_in}: ${p.stock.join(", ")}</span>`:`<span class="chip">${T[lang].chip_pre}</span>`}${p.avito?"":`<span class="chip tg">${T[lang].tgonly}</span>`}</div>
       <div class="row"><span class="price">${rub(p.price)}</span><span class="more">${T[lang].more}</span></div></div>`;
     b.addEventListener("click",()=>openP(p,0));
     g.appendChild(b);
@@ -546,9 +549,9 @@ function openP(p,i,keep){
   $("#d-title").textContent=L.n;
   $("#d-chips").innerHTML=L.s.map(s=>`<span class="chip">${s}</span>`).join("");
   $("#d-feat").innerHTML=L.f.map(f=>`<li>${f}</li>`).join("");
-  $("#d-sizes").innerHTML=p.sizes.map(s=>`<span>${s}</span>`).join("");
+  $("#d-sizes").innerHTML=p.sizes.map(s=>p.stock&&p.stock.includes(s)?`<span class="in" title="${T[lang].d_in}">${s}</span>`:`<span>${s}</span>`).join("");
   $("#d-price").textContent=rub(p.price);
-  $("#d-note").textContent=T[lang][p.ask?"d_note_ask":"d_note"];
+  $("#d-note").textContent=p.stock?T[lang].d_note.replace("{s}",p.stock.join(", ")):T[lang].d_note_pre;
   $("#d-prev").hidden=$("#d-next").hidden=p.img.length<2;
   $("#d-avito").href=p.avito||"#"; $("#d-avito").hidden=!p.avito;
   $("#d-tg").href="https://t.me/drshmit_msk?text="+encodeURIComponent(T[lang].tgmsg+p.code+" — "+L.n);

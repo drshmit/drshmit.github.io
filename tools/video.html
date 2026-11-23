@@ -22,7 +22,7 @@ const logEl=document.getElementById('log');
 function log(t){S.log.push(t);logEl.textContent=S.log.join('\n');}
 async function walk(dir,path=''){const out=[];for await(const [name,h] of dir.entries()){if(h.kind==='directory'){out.push(...await walk(h,path+name+'/'));}else if(/\.(mp4|mov)$/i.test(name)&&!/_avito\.mp4$/i.test(name)){const f=await h.getFile();if(f.size>30e6&&!(await has(dir,name.replace(/\.[^.]+$/,'')+'_avito.mp4')))out.push({dir,name,path:path+name,file:f});}}return out;}
 async function has(dir,n){try{await dir.getFileHandle(n);return true}catch{return false}}
-function opts(track){const w=track.displayWidth,h=track.displayHeight;const land=w>=h;const o={codec:'avc',frameRate:30,bitrate:6e6,hardwareAcceleration:'prefer-hardware',keyFrameInterval:2};if(Math.min(w,h)>1080){if(land)o.height=1080;else o.width=1080;}return o;}
+function opts(track){const w=track.displayWidth,h=track.displayHeight;const land=w>=h;const o={codec:'avc',frameRate:30,bitrate:6e6,hardwareAcceleration:'no-preference',keyFrameInterval:2};if(Math.min(w,h)>1080){if(land)o.height=1080;else o.width=1080;}return o;}
 async function convert(file,target,label){
   const input=new Input({source:new BlobSource(file),formats:ALL_FORMATS});
   const output=new Output({format:new Mp4OutputFormat({fastStart:target instanceof BufferTarget?'in-memory':false}),target});

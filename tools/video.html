@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dr. Shmit — сжатие видео для Авито</title>
+<style>
+body{font:15px/1.5 system-ui,sans-serif;background:#141210;color:#eee;margin:0;padding:28px}
+h1{font-size:20px;margin:0 0 6px} p{color:#bbb;margin:0 0 18px}
+button{font:600 16px system-ui;background:#c9a46a;color:#111;border:0;border-radius:10px;padding:14px 22px;cursor:pointer;margin-right:10px}
+button.sec{background:#333;color:#eee}
+#log{margin-top:20px;font:13px/1.6 ui-monospace,monospace;white-space:pre-wrap}
+.bar{height:8px;background:#333;border-radius:4px;overflow:hidden;margin:4px 0 10px}.bar i{display:block;height:100%;background:#c9a46a;width:0}
+</style></head><body>
+<h1>Сжатие видео для Авито</h1>
+<p>Выберите папку «SHOES by model». Все большие видео (.MP4/.MOV) будут уменьшены до 1080p без звука и сохранены рядом с оригиналом как <b>…_avito.mp4</b>. Оригиналы не меняются.</p>
+<button id="pick">Выбрать папку</button><button id="files" class="sec">…или выбрать файлы</button>
+<input id="fi" type="file" accept="video/*" multiple hidden>
+<div id="log"></div>
+<script type="module">
+import {Input,ALL_FORMATS,BlobSource,Output,Mp4OutputFormat,StreamTarget,BufferTarget,Conversion} from './mediabunny.min.mjs';
+const S=window.__status={state:'idle',files:[],log:[]};
+const logEl=document.getElementById('log');
+function log(t){S.log.push(t);logEl.textContent=S.log.join('\n');}
+async function walk(dir,path=''){const out=[];for await(const [name,h] of dir.entries()){if(h.kind==='directory'){out.push(...await walk(h,path+name+'/'));}else if(/\.(mp4|mov)$/i.test(name)&&!/_avito\.mp4$/i.test(name)){const f=await h.getFile();if(f.size>30e6&&!(await has(dir,name.replace(/\.[^.]+$/,'')+'_avito.mp4')))out.push({dir,name,path:path+name,file:f});}}return out;}
+async function has(dir,n){try{await dir.getFileHandle(n);return true}catch{return false}}
+function opts(track){const w=track.displayWidth,h=track.displayHeight;const land=w>=h;const o={codec:'avc',frameRate:30,bitrate:6e6,hardwareAcceleration:'prefer-hardware',keyFrameInterval:2};if(Math.min(w,h)>1080){if(land)o.height=1080;else o.width=1080;}return o;}
+async function convert(file,target,label){
+  const input=new Input({source:new BlobSource(file),formats:ALL_FORMATS});
+  const output=new Output({format:new Mp4OutputFormat({fastStart:target instanceof BufferTarget?'in-memory':false}),target});
+  const c=await Conversion.init({input,output,video:(t)=>opts(t),audio:{discard:true},showWarnings:false});
+  if(!c.isValid) throw new Error('не поддерживается: '+JSON.stringify(c.discardedTracks.map(d=>d.reason)));
+  const row=document.createElement('div');row.innerHTML=`<div>${label}</div><div class="bar"><i></i></div>`;logEl.after(row);const bar=row.querySelector('i');
+  c.onProgress=p=>{bar.style.width=(p*100).toFixed(1)+'%';S.cur={label,p};};
+  await c.execute();
+}
+async function runFolder(){
+  let root;try{root=await showDirectoryPicker({mode:'readwrite',id:'shoes'});}catch(e){log('Папка не выбрана: '+e.message);return;}
+  S.state='scanning';log('Ищу видео в «'+root.name+'»…');
+  const list=await walk(root);S.files=list.map(x=>({path:x.path,mb:(x.file.size/1e6).toFixed(0)}));
+  log('Найдено: '+list.length+(list.length?'\n'+list.map(x=>' • '+x.path+' ('+(x.file.size/1e6).toFixed(0)+' МБ)').join('\n'):''));
+  S.state='converting';
+  for(const [i,x] of list.entries()){
+    const outName=x.name.replace(/\.[^.]+$/,'')+'_avito.mp4';
+    try{const fh=await x.dir.getFileHandle(outName,{create:true});const w=await fh.createWritable();
+      const t0=performance.now();await convert(x.file,new StreamTarget(w),`${i+1}/${list.length} ${x.path}`);await w.close().catch(()=>{});
+      const f=await fh.getFile();const r={path:x.path,out:outName,mb:(f.size/1e6).toFixed(1),sec:((performance.now()-t0)/1000).toFixed(0)};S.files[i].done=r;log('✓ '+x.path+' → '+outName+' '+r.mb+' МБ ('+r.sec+' с)');
+    }catch(e){S.files[i].err=String(e);log('✗ '+x.path+': '+e);try{await x.dir.removeEntry(outName)}catch{}}
+  }
+  S.state='done';log('Готово.');
+}
+async function runFiles(files){
+  S.state='converting';
+  for(const f of files){try{const t=new BufferTarget();await convert(f,t,f.name);const b=new Blob([t.buffer],{type:'video/mp4'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=f.name.replace(/\.[^.]+$/,'')+'_avito.mp4';a.click();log('✓ '+f.name+' → '+a.download+' '+(b.size/1e6).toFixed(1)+' МБ (в «Загрузки»)');}catch(e){log('✗ '+f.name+': '+e);}}
+  S.state='done';log('Готово.');
+}
+document.getElementById('pick').onclick=()=>{if(!window.showDirectoryPicker){log('Выбор папки не поддерживается — используйте кнопку «выбрать файлы».');return;}runFolder();};
+document.getElementById('files').onclick=()=>document.getElementById('fi').click();
+document.getElementById('fi').onchange=e=>runFiles([...e.target.files]);
+S.api={dirPicker:!!window.showDirectoryPicker,webcodecs:!!window.VideoEncoder};
+log('Готов к работе. WebCodecs: '+(window.VideoEncoder?'да':'нет')+', выбор папки: '+(window.showDirectoryPicker?'да':'нет'));
+</script></body></html>

@@ -175,7 +175,8 @@ async function runFolder(){
   S.state='converting';
   for(const [i,x] of list.entries()){
     const r=CLIPS[x.name.toUpperCase()];
-    const modelDir=x.parent.split('/').filter(Boolean)[0]||'';
+    const segs=x.parent.split('/').filter(Boolean);const mi=segs.findIndex(p=>/(M01|W05|W08)/.test(p));
+    const modelDir=(mi>=0?segs.slice(0,mi+1):segs.slice(0,1)).join('/');
     try{
       const outDir=await subdir(root,modelDir+'/edited v2');
       const fh=await outDir.getFileHandle(r.out,{create:true});const w=await fh.createWritable();

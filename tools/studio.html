@@ -139,7 +139,7 @@ async function edit(file,recipe,target,label){
   const vt=await input.getPrimaryVideoTrack();if(!vt)throw new Error('нет видеодорожки');
   const dur=await input.computeDuration();
   const sw=vt.displayWidth,sh=vt.displayHeight;const land=sw>=sh;
-  let ow=land?1920:1080,oh=land?1080:1920; if(Math.max(sw,sh)<1920){ow=Math.round(sw/2)*2;oh=Math.round(sh/2)*2;}
+  let ow=land?1280:720,oh=land?720:1280; if(Math.max(sw,sh)<1280){ow=Math.round(sw/2)*2;oh=Math.round(sh/2)*2;}
   const t0=Math.min(recipe.trim[0],dur*0.2), t1=Math.max(dur-recipe.trim[1],t0+1);
   const L={...LOOK,...(recipe.look||{})};const m=MODELS[recipe.model]||{name:'',sub:''};
   const g=new Grader(ow,oh);
@@ -147,7 +147,7 @@ async function edit(file,recipe,target,label){
   const row=document.createElement('div');row.className='row';row.innerHTML=`<div>${label}</div><div class="bar"><i></i></div>`;logEl.before(row);const bar=row.querySelector('i');
   let frames=0, first=null;
   const c=await Conversion.init({input,output,trim:{start:t0,end:t1},audio:{discard:true},showWarnings:false,
-    video:{codec:'avc',frameRate:30,bitrate:8e6,hardwareAcceleration:'no-preference',keyFrameInterval:2,forceTranscode:true,
+    video:{codec:'avc',frameRate:30,bitrate:1.5e6,hardwareAcceleration:'no-preference',keyFrameInterval:2,forceTranscode:true,
       processedWidth:ow,processedHeight:oh,
       process:(sample)=>{
         if(first===null)first=sample.timestamp;

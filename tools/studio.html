@@ -166,8 +166,8 @@ async function edit(file,recipe,target,label){
 }
 async function walk(dir,path=''){const out=[];for await(const [name,h] of dir.entries()){if(h.kind==='directory'){if(/^edited/i.test(name))continue;out.push(...await walk(h,path+name+'/'));}else if(CLIPS[name.toUpperCase()]){out.push({dir,name,path:path+name,parent:path,file:await h.getFile()});}}return out;}
 async function subdir(root,path){let d=root;for(const p of path.split('/').filter(Boolean))d=await d.getDirectoryHandle(p,{create:true});return d;}
-async function runFolder(){
-  let root;try{root=await showDirectoryPicker({mode:'readwrite',id:'shoes'});}catch(e){log('Папка не выбрана: '+e.message);return;}
+async function runFolder(testRoot){
+  let root=testRoot;if(!root){try{root=await showDirectoryPicker({mode:'readwrite',id:'shoes'});}catch(e){log('Папка не выбрана: '+e.message);return;}}
   S.state='scanning';log('Ищу видео в «'+root.name+'»…');
   const list=await walk(root);S.files=list.map(x=>({path:x.path}));
   log('Найдено: '+list.length+(list.length?'\n'+list.map(x=>' • '+x.path+' ('+(x.file.size/1e6).toFixed(0)+' МБ)').join('\n'):''));
@@ -198,7 +198,7 @@ async function runFiles(files){
   }
   S.state='done';log('Готово.');
 }
-window.__runFiles=runFiles;window.__edit=edit;window.__BT=BufferTarget;
+window.__runFiles=runFiles;window.__runFolder=runFolder;window.__edit=edit;window.__BT=BufferTarget;
 document.getElementById('pick').onclick=()=>{if(!window.showDirectoryPicker){log('Выбор папки не поддерживается — используйте «выбрать видео вручную».');return;}runFolder();};
 document.getElementById('files').onclick=()=>document.getElementById('fi').click();
 document.getElementById('fi').onchange=e=>runFiles([...e.target.files]);

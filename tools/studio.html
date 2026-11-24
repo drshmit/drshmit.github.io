@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dr. Shmit — видеостудия</title>
+<style>
+:root{--gold:#c9a46a}
+body{font:15px/1.5 system-ui,sans-serif;background:#100f0e;color:#eee;margin:0;padding:32px;max-width:880px}
+h1{font:600 22px Georgia,serif;letter-spacing:.06em;margin:0 0 4px}
+p{color:#b5afa6;margin:0 0 18px}
+button{font:600 16px system-ui;background:var(--gold);color:#111;border:0;border-radius:10px;padding:14px 22px;cursor:pointer;margin:0 10px 10px 0}
+button.sec{background:#2c2925;color:#eee}
+button:disabled{opacity:.45;cursor:default}
+#log{margin-top:18px;font:13px/1.6 ui-monospace,monospace;white-space:pre-wrap;color:#d8d2c8}
+.row{margin:10px 0}.bar{height:8px;background:#2c2925;border-radius:4px;overflow:hidden;margin:4px 0}.bar i{display:block;height:100%;background:var(--gold);width:0}
+canvas#pv{width:100%;max-width:640px;border-radius:8px;display:block;margin-top:14px;background:#000}
+</style></head><body>
+<h1>DR. SHMIT · ВИДЕОСТУДИЯ</h1>
+<p>Нажмите кнопку и выберите папку <b>«SHOES by model»</b>, затем разрешите сохранение. Студия сама найдёт видео M01, W05, W08, сделает цветокоррекцию, обрежет начало и конец, добавит плавное появление и финальную заставку. Готовые ролики появятся в папке <b>«edited v2»</b> у каждой модели. Оригиналы не меняются.</p>
+<button id="pick">Выбрать папку «SHOES by model»</button><button id="files" class="sec">…или выбрать видео вручную</button>
+<input id="fi" type="file" accept="video/*" multiple hidden>
+<canvas id="pv" width="640" height="360"></canvas>
+<div id="log"></div>
+<script type="module">
+import {Input,ALL_FORMATS,BlobSource,Output,Mp4OutputFormat,StreamTarget,BufferTarget,Conversion} from './mediabunny.min.mjs';
+
+// ---------------------------------------------------------------- per-clip recipes
+const MODELS={
+  M01:{name:'Челси утеплённые',sub:'натуральная кожа · M01'},
+  W05:{name:'Полусапоги стёганые',sub:'натуральная кожа · W05'},
+  W08:{name:'Челси на тракторной подошве',sub:'натуральная кожа · W08'},
+};
+// file -> {model, out, trim:[startSec, cutFromEndSec], look overrides}
+const CLIPS={
+  'IMG_5855.MP4':{model:'M01',out:'M01_video.mp4',trim:[0.5,0.4]},
+  'IMG_5856.MP4':{model:'W05',out:'W05_video.mp4',trim:[0.5,0.4]},
+  'IMG_5858.MP4':{model:'W05',out:'W05_video_lining.mp4',trim:[0.4,0.3]},
+  'IMG_5857.MP4':{model:'W05',out:'W05_video_2.mp4',trim:[0.5,0.4]},
+  'IMG_5854.MP4':{model:'W08',out:'W08_video.mp4',trim:[0.5,0.4]},
+};
+const MODEL_OF_DIR=d=>(d.match(/(M01|W05|W08)/)||[])[1];
+const LOOK={exposure:1.05,contrast:1.2,lift:0.025,sat:0.82,warm:0.055,vignette:0.58,sharpen:0.55,grain:0.012,fadeIn:0.45,card:2.2};
+
+const S=window.__status={state:'idle',files:[],log:[]};
+const logEl=document.getElementById('log');
+function log(t){S.log.push(t);logEl.textContent=S.log.join('\n');}
+
+// ---------------------------------------------------------------- WebGL grade
+const VS=`#version 300 es
+in vec2 p;out vec2 uv;void main(){uv=p*.5+.5;uv.y=1.-uv.y;gl_Position=vec4(p,0,1);}`;
+const FS_GRADE=`#version 300 es
+precision highp float;in vec2 uv;out vec4 o;uniform sampler2D src;uniform vec2 srcPx;uniform vec2 outPx;
+uniform float exposure,contrast,lift,sat,warm,vignette,fade;
+vec3 tap(vec2 q){return texture(src,q).rgb;}
+void main(){
+  // 4-tap box downsample (anti-alias 4K -> 1080p)
+  vec2 h=.25/outPx; vec3 c=(tap(uv+vec2(-h.x,-h.y))+tap(uv+vec2(h.x,-h.y))+tap(uv+vec2(-h.x,h.y))+tap(uv+vec2(h.x,h.y)))*.25;
+  c*=exposure;
+  // de-blue (window light on black leather)
+  float ex=max(c.b-max(c.r,c.g),0.); c.b-=.6*ex;
+  // filmic S-curve around mid grey + gentle shadow lift
+  c=clamp(c,0.,1.); c=mix(c, c*c*(3.-2.*c), contrast-1.); c=c+lift*(1.-c)*(1.-c)*c*4.;
+  // shoulder for specular highlights
+  c=mix(c, .8+.2*(1.-exp(-(c-.8)/.2)), step(.8,c));
+  float L=dot(c,vec3(.2126,.7152,.0722));
+  c=mix(vec3(L),c,sat);
+  // split tone: warm highlights, cooler deep shadows
+  c+=vec3(warm,warm*.3,-warm*.6)*L; c+=vec3(-.004,0.,.012)*pow(1.-L,4.);
+  // vignette (elliptical, soft)
+  vec2 d=(uv-vec2(.5,.52))*vec2(1.,outPx.y/outPx.x*1.25); float v=1.-vignette*smoothstep(.18,.78,length(d)*1.35);
+  c*=v; c=.006+c*.994;
+  o=vec4(clamp(c*fade,0.,1.),1.);
+}`;
+const FS_SHARP=`#version 300 es
+precision highp float;in vec2 uv;out vec4 o;uniform sampler2D src;uniform vec2 outPx;uniform float amount,grain,seed;
+float hash(vec2 p){return fract(sin(dot(p,vec2(12.9898,78.233))+seed)*43758.5453);}
+void main(){vec2 t=1./outPx;vec2 q=vec2(uv.x,1.-uv.y);vec3 c=texture(src,q).rgb;
+  vec3 b=(texture(src,q+vec2(t.x,0)).rgb+texture(src,q-vec2(t.x,0)).rgb+texture(src,q+vec2(0,t.y)).rgb+texture(src,q-vec2(0,t.y)).rgb)*.25;
+  float L=dot(c,vec3(.2126,.7152,.0722)), Lb=dot(b,vec3(.2126,.7152,.0722));
+  c+=vec3((L-Lb)*amount);
+  c+=vec3((hash(uv*outPx)-.5)*grain);
+  o=vec4(clamp(c,0.,1.),1.);}`;
+
+class Grader{
+  constructor(w,h){
+    this.w=w;this.h=h;this.cv=new OffscreenCanvas(w,h);
+    const gl=this.gl=this.cv.getContext('webgl2',{premultipliedAlpha:false,preserveDrawingBuffer:true});
+    if(!gl) throw new Error('WebGL2 недоступен');
+    const mk=(fs)=>{const p=gl.createProgram();for(const [t,s] of [[gl.VERTEX_SHADER,VS],[gl.FRAGMENT_SHADER,fs]]){const sh=gl.createShader(t);gl.shaderSource(sh,s);gl.compileShader(sh);if(!gl.getShaderParameter(sh,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(sh));gl.attachShader(p,sh);}gl.linkProgram(p);return p;};
+    this.pg=mk(FS_GRADE);this.ps=mk(FS_SHARP);
+    const buf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buf);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
+    for(const p of [this.pg,this.ps]){const l=gl.getAttribLocation(p,'p');gl.enableVertexAttribArray(l);gl.vertexAttribPointer(l,2,gl.FLOAT,false,0,0);}
+    const tex=()=>{const t=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,t);for(const [k,v] of [[gl.TEXTURE_MIN_FILTER,gl.LINEAR],[gl.TEXTURE_MAG_FILTER,gl.LINEAR],[gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE],[gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE]])gl.texParameteri(gl.TEXTURE_2D,k,v);return t;};
+    this.tSrc=tex();this.tMid=tex();gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA8,w,h,0,gl.RGBA,gl.UNSIGNED_BYTE,null);
+    this.fb=gl.createFramebuffer();gl.bindFramebuffer(gl.FRAMEBUFFER,this.fb);gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,this.tMid,0);gl.bindFramebuffer(gl.FRAMEBUFFER,null);
+    this.out=new OffscreenCanvas(w,h);this.ctx=this.out.getContext('2d');this.n=0;
+  }
+  u(p,n,...v){const gl=this.gl,l=gl.getUniformLocation(p,n);if(v.length===1)gl.uniform1f(l,v[0]);else gl.uniform2f(l,v[0],v[1]);}
+  frame(img,sw,sh,L,fade){
+    const gl=this.gl;gl.viewport(0,0,this.w,this.h);
+    gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,this.tSrc);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,false);
+    gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,img);
+    gl.bindFramebuffer(gl.FRAMEBUFFER,this.fb);gl.useProgram(this.pg);
+    gl.uniform1i(gl.getUniformLocation(this.pg,'src'),0);
+    this.u(this.pg,'srcPx',sw,sh);this.u(this.pg,'outPx',this.w,this.h);
+    for(const k of ['exposure','contrast','lift','sat','warm','vignette'])this.u(this.pg,k,L[k]);this.u(this.pg,'fade',fade);
+    gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
+    gl.bindFramebuffer(gl.FRAMEBUFFER,null);gl.useProgram(this.ps);gl.bindTexture(gl.TEXTURE_2D,this.tMid);
+    gl.uniform1i(gl.getUniformLocation(this.ps,'src'),0);this.u(this.ps,'outPx',this.w,this.h);this.u(this.ps,'amount',L.sharpen);this.u(this.ps,'grain',L.grain);this.u(this.ps,'seed',(this.n++%97)*.37);
+    gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
+    this.ctx.globalAlpha=1;this.ctx.drawImage(this.cv,0,0);
+    return this.ctx;
+  }
+}
+
+// ---------------------------------------------------------------- end card / titles
+function ease(t){t=Math.min(Math.max(t,0),1);return t*t*(3-2*t);}
+function card(ctx,w,h,k,m){
+  if(k<=0)return;
+  ctx.save();
+  ctx.fillStyle=`rgba(8,7,6,${0.72*ease(k)})`;ctx.fillRect(0,0,w,h);
+  const a=ease((k-0.15)/0.6), s=h/1080;
+  ctx.globalAlpha=a;ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillStyle='#efe8dc';ctx.font=`500 ${Math.round(74*s)}px Georgia, "Times New Roman", serif`;
+  if('letterSpacing' in ctx)ctx.letterSpacing=`${Math.round(18*s)}px`;
+  ctx.fillText('DR. SHMIT',w/2+9*s,h/2-58*s);
+  if('letterSpacing' in ctx)ctx.letterSpacing='0px';
+  ctx.strokeStyle='#c9a46a';ctx.lineWidth=Math.max(1,2*s);const lw=150*s*ease((k-0.25)/0.5);
+  ctx.beginPath();ctx.moveTo(w/2-lw,h/2+2*s);ctx.lineTo(w/2+lw,h/2+2*s);ctx.stroke();
+  ctx.fillStyle='#efe8dc';ctx.font=`400 ${Math.round(40*s)}px Georgia, "Times New Roman", serif`;ctx.fillText(m.name,w/2,h/2+60*s);
+  ctx.fillStyle='#c9a46a';ctx.font=`400 ${Math.round(26*s)}px system-ui, sans-serif`;
+  if('letterSpacing' in ctx)ctx.letterSpacing=`${Math.round(4*s)}px`;ctx.fillText(m.sub.toUpperCase(),w/2,h/2+112*s);
+  ctx.restore();
+}
+
+// ---------------------------------------------------------------- conversion
+const pv=document.getElementById('pv').getContext('2d');
+async function edit(file,recipe,target,label){
+  const input=new Input({source:new BlobSource(file),formats:ALL_FORMATS});
+  const vt=await input.getPrimaryVideoTrack();if(!vt)throw new Error('нет видеодорожки');
+  const dur=await input.computeDuration();
+  const sw=vt.displayWidth,sh=vt.displayHeight;const land=sw>=sh;
+  let ow=land?1920:1080,oh=land?1080:1920; if(Math.max(sw,sh)<1920){ow=Math.round(sw/2)*2;oh=Math.round(sh/2)*2;}
+  const t0=Math.min(recipe.trim[0],dur*0.2), t1=Math.max(dur-recipe.trim[1],t0+1);
+  const L={...LOOK,...(recipe.look||{})};const m=MODELS[recipe.model]||{name:'',sub:''};
+  const g=new Grader(ow,oh);
+  const output=new Output({format:new Mp4OutputFormat({fastStart:target instanceof BufferTarget?'in-memory':false}),target});
+  const row=document.createElement('div');row.className='row';row.innerHTML=`<div>${label}</div><div class="bar"><i></i></div>`;logEl.before(row);const bar=row.querySelector('i');
+  let frames=0, first=null;
+  const c=await Conversion.init({input,output,trim:{start:t0,end:t1},audio:{discard:true},showWarnings:false,
+    video:{codec:'avc',frameRate:30,bitrate:8e6,hardwareAcceleration:'no-preference',keyFrameInterval:2,forceTranscode:true,
+      processedWidth:ow,processedHeight:oh,
+      process:(sample)=>{
+        if(first===null)first=sample.timestamp;
+        const t=sample.timestamp-first, T=t1-t0;
+        const fade=ease(t/L.fadeIn);
+        const vf=sample.toVideoFrame();
+        const ctx=g.frame(vf,sw,sh,L,fade);vf.close();
+        card(ctx,ow,oh,(t-(T-L.card))/L.card*1.6,m);
+        if((frames++%15)===0){pv.drawImage(g.out,0,0,640,360);}
+        return new VideoFrame(g.out,{timestamp:Math.round(sample.timestamp*1e6),duration:Math.round((sample.duration||1/30)*1e6)});
+      }}});
+  if(!c.isValid) throw new Error('не поддерживается: '+JSON.stringify(c.discardedTracks.map(d=>d.reason)));
+  c.onProgress=p=>{bar.style.width=(p*100).toFixed(1)+'%';S.cur={label,p};};
+  await c.execute();
+  return {frames,dur:(t1-t0)};
+}
+async function walk(dir,path=''){const out=[];for await(const [name,h] of dir.entries()){if(h.kind==='directory'){if(/^edited/i.test(name))continue;out.push(...await walk(h,path+name+'/'));}else if(CLIPS[name.toUpperCase()]){out.push({dir,name,path:path+name,parent:path,file:await h.getFile()});}}return out;}
+async function subdir(root,path){let d=root;for(const p of path.split('/').filter(Boolean))d=await d.getDirectoryHandle(p,{create:true});return d;}
+async function runFolder(){
+  let root;try{root=await showDirectoryPicker({mode:'readwrite',id:'shoes'});}catch(e){log('Папка не выбрана: '+e.message);return;}
+  S.state='scanning';log('Ищу видео в «'+root.name+'»…');
+  const list=await walk(root);S.files=list.map(x=>({path:x.path}));
+  log('Найдено: '+list.length+(list.length?'\n'+list.map(x=>' • '+x.path+' ('+(x.file.size/1e6).toFixed(0)+' МБ)').join('\n'):''));
+  if(!list.length){log('Не нашла видео. Убедитесь, что выбрана папка «SHOES by model».');S.state='done';return;}
+  S.state='converting';
+  for(const [i,x] of list.entries()){
+    const r=CLIPS[x.name.toUpperCase()];
+    const modelDir=x.parent.split('/').filter(Boolean)[0]||'';
+    try{
+      const outDir=await subdir(root,modelDir+'/edited v2');
+      const fh=await outDir.getFileHandle(r.out,{create:true});const w=await fh.createWritable();
+      const tt=performance.now();const info=await edit(x.file,r,new StreamTarget(w),`${i+1}/${list.length} ${x.path} → ${modelDir}/edited v2/${r.out}`);await w.close().catch(()=>{});
+      const f=await fh.getFile();const done={out:modelDir+'/edited v2/'+r.out,mb:(f.size/1e6).toFixed(1),sec:((performance.now()-tt)/1000).toFixed(0),len:info.dur.toFixed(1)};S.files[i].done=done;
+      log('✓ '+done.out+' — '+done.mb+' МБ, '+done.len+' с видео (обработка '+done.sec+' с)');
+    }catch(e){S.files[i].err=String(e);log('✗ '+x.path+': '+e);}
+  }
+  S.state='done';log('\nГотово! Ролики лежат в папках «edited v2».');
+}
+async function runFiles(files){
+  S.state='converting';
+  for(const f of files){
+    const r=CLIPS[f.name.toUpperCase()]||{model:'',out:f.name.replace(/\.[^.]+$/,'')+'_studio.mp4',trim:[0.5,0.4]};
+    try{const t=new BufferTarget();await edit(f,r,t,f.name+' → '+r.out);const b=new Blob([t.buffer],{type:'video/mp4'});
+      const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=r.out;document.body.appendChild(a);a.click();
+      S.files.push({path:f.name,done:{out:r.out,mb:(b.size/1e6).toFixed(1)}});log('✓ '+f.name+' → '+r.out+' '+(b.size/1e6).toFixed(1)+' МБ (в «Загрузки»)');
+    }catch(e){log('✗ '+f.name+': '+e);S.files.push({path:f.name,err:String(e)});}
+  }
+  S.state='done';log('Готово.');
+}
+window.__runFiles=runFiles;window.__edit=edit;window.__BT=BufferTarget;
+document.getElementById('pick').onclick=()=>{if(!window.showDirectoryPicker){log('Выбор папки не поддерживается — используйте «выбрать видео вручную».');return;}runFolder();};
+document.getElementById('files').onclick=()=>document.getElementById('fi').click();
+document.getElementById('fi').onchange=e=>runFiles([...e.target.files]);
+S.api={dirPicker:!!window.showDirectoryPicker,webcodecs:!!window.VideoEncoder,webgl2:!!new OffscreenCanvas(1,1).getContext('webgl2')};
+log('Готово к работе. WebCodecs: '+(S.api.webcodecs?'да':'нет')+', WebGL2: '+(S.api.webgl2?'да':'нет')+', выбор папки: '+(S.api.dirPicker?'да':'нет'));
+</script></body></html>
